@@ -1,6 +1,7 @@
 # Digit Classifier
 
 A simple digit-classifying neural-network created with PyTorch.
+
 ![Showcase](assets/showcase.gif)
 
 I created this program to familiarize myself with artificial intelligence, neural networks, and PyTorch.
