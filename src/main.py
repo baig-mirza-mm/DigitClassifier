@@ -1,6 +1,7 @@
 import pygame
 from PIL import Image
 import classify
+import numpy as np
 
 # initialize
 pygame.init()
@@ -49,12 +50,11 @@ def get_img_bounding_box():
 
 # returns the pixels that were drawn
 def get_drawing():
-    output_image = Image.new("RGB", (bounding_box_bottom_right[0] - bounding_box_top_left[0], bounding_box_bottom_right[1] - bounding_box_top_left[1]), color = "black")
+    # get the surface as an array of colors and obtain slice the region only within the bounding box
+    pixels = np.array(pygame.surfarray.array3d(screen))[bounding_box_top_left[0]:bounding_box_bottom_right[0], bounding_box_top_left[1]:bounding_box_bottom_right[1]]
 
-    for x in range(bounding_box_top_left[0], bounding_box_bottom_right[0]):
-        for y in range (bounding_box_top_left[1], bounding_box_bottom_right[1]):
-            # write all the RGB (discarding A) values
-            output_image.putpixel((x - bounding_box_top_left[0], y - bounding_box_top_left[1]), screen.get_at((x, y))[:3])
+    # transpose the image because for some reason the surface is transposed
+    output_image = Image.fromarray(pixels.transpose(1, 0, 2), mode = "RGB")
 
     return output_image
 
@@ -79,7 +79,7 @@ cycles = 0
 while True:
     cycles = (cycles + 1) % 1000
 
-    if (classification_ready and not screen_is_clear() and cycles % 5 == 0):
+    if (classification_ready and not screen_is_clear() and cycles % 3 == 0):
         probs_string = classify.classify(get_drawing())
 
     for event in pygame.event.get():
@@ -160,7 +160,7 @@ while True:
     # the "clear" button
     clear_rect = pygame.draw.rect(screen, (30, 30, 30), (720 + 5, 720 - 50, 560 - 5 - 5, 45))
 
-    clear_text = font_small.render("Clear", True, (255, 255, 255))
+    clear_text = font_small.render("CLEAR", True, (255, 255, 255))
 
     # change the clear rect so that the text is centered
     clear_rect = clear_text.get_rect(center=(720 + (1280 - 720) / 2, 720 - 25))

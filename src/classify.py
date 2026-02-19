@@ -23,6 +23,8 @@ def get_center_of_mass(img: Image.Image):
 
             weight_totals += brightness
 
+    weight_totals = max(weight_totals, 1)
+
     # The center of mass is the contribution totals divided by the weight totals
     return (contribution_totals[0] / weight_totals, contribution_totals[1] / weight_totals)
 
